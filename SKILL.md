@@ -1,6 +1,6 @@
 ---
 name: wbcli
-description: Use when working with the official Wildberries Seller API through the wbcli command-line tool: checking token scopes, testing connectivity, reading seller info, exploring read-only WB endpoints, planning data exports for Google Sheets, or debugging WB API access. This skill is for authorized seller API access only; do not use it for scraping private cabinet endpoints, bypassing permissions, or handling tokens insecurely.
+description: "Use when working with the official Wildberries Seller API through the wbcli command-line tool: checking token scopes, testing connectivity, reading seller info, exploring read-only WB endpoints, planning data exports for Google Sheets, or debugging WB API access. This skill is for authorized seller API access only; do not use it for scraping private cabinet endpoints, bypassing permissions, or handling tokens insecurely."
 ---
 
 # wbcli

@@ -1,0 +1,53 @@
+{
+  "name": "wbcli",
+  "version": "0.1.0",
+  "description": "Command-line tools for the official Wildberries Seller API.",
+  "type": "module",
+  "bin": {
+    "wbcli": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "SKILL.md",
+    ".env.example"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "wildberries",
+    "wb",
+    "seller-api",
+    "cli",
+    "marketplace"
+  ],
+  "author": "Danil Pismenny",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dapi/wbcli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dapi/wbcli/issues"
+  },
+  "homepage": "https://github.com/dapi/wbcli#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.6"
+  }
+}

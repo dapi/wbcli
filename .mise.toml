@@ -1,0 +1,26 @@
+[tools]
+node = "22"
+
+[tasks.install]
+description = "Install npm dependencies from package-lock.json"
+run = "npm ci"
+
+[tasks.dev]
+description = "Run the CLI from TypeScript sources"
+run = "npm run dev --"
+
+[tasks.typecheck]
+description = "Typecheck TypeScript sources"
+run = "npm run typecheck"
+
+[tasks.test]
+description = "Run the test suite"
+run = "npm test"
+
+[tasks.build]
+description = "Build the CLI"
+run = "npm run build"
+
+[tasks.ci]
+description = "Run the same checks as CI"
+depends = ["typecheck", "test", "build"]

@@ -42,7 +42,7 @@ Why:
    - stable field names for `sku_map`, `fact_sku_day`, `unit_economics`.
 4. Safety:
    - no token logging;
-   - rate limit awareness;
+   - rate limit awareness through parsed `X-Ratelimit-*` headers;
    - read-only default;
    - write commands require explicit `--write` and should be added only after review.
 5. Skill:
@@ -76,6 +76,33 @@ wbcli ping
 wbcli seller-info
 wbcli raw GET /ping --base common
 ```
+
+## Rate Limits
+
+WB API limits differ by endpoint and token type. `wbcli` can expose the response
+headers WB returns for rate limiting:
+
+```bash
+wbcli ping --rate-limit
+wbcli raw GET /ping --base common --rate-limit --include-headers
+```
+
+Parsed fields:
+
+- `limit` from `X-Ratelimit-Limit`
+- `remaining` from `X-Ratelimit-Remaining`
+- `resetSeconds` from `X-Ratelimit-Reset`
+- `retrySeconds` from `X-Ratelimit-Retry`
+
+For one-off diagnostics, `--retry-on-429` can wait for `X-Ratelimit-Retry` and
+retry once by default:
+
+```bash
+wbcli raw GET /ping --base common --retry-on-429 --max-retries 1
+```
+
+Do not use `--retry-on-429` blindly for endpoints that return long retry windows
+such as seller information. Cache low-limit responses instead.
 
 ## Official Access Model
 

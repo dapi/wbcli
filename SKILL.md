@@ -63,6 +63,22 @@ Call a read-only endpoint:
 wbcli raw GET /ping --base common
 ```
 
+Inspect WB rate-limit headers for a method:
+
+```bash
+wbcli ping --rate-limit
+wbcli raw GET /ping --base common --rate-limit --include-headers
+```
+
+Retry a one-off request only when WB returns a short `X-Ratelimit-Retry`:
+
+```bash
+wbcli raw GET /ping --base common --retry-on-429 --max-retries 1
+```
+
+Do not use automatic retry on low-frequency endpoints such as `seller-info` when
+the retry window is long. Cache those results instead.
+
 ## Endpoint Selection
 
 Use base aliases instead of hardcoding domains when possible:
@@ -78,6 +94,14 @@ Use base aliases instead of hardcoding domains when possible:
 - `finance`
 
 Before building a workflow, verify the required token scopes with `wbcli token:decode`, then test the smallest read-only endpoint first.
+
+## Rate-Limit Handling
+
+- WB API limits are endpoint- and token-type-specific; do not assume one global rate.
+- Prefer `--rate-limit` during exploration to see parsed `X-Ratelimit-*` values.
+- On `429`, read `rateLimit.retrySeconds`; wait that long or stop and report the limit.
+- Avoid repeated `ping` and `seller-info` checks in loops. `seller-info` can have very low limits and should be cached after a successful check.
+- For data exports, throttle requests according to the method documentation and add pagination/date-window checkpoints instead of firing parallel requests.
 
 ## TASK-10 Guidance
 

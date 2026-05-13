@@ -29,6 +29,20 @@ export const tokenScopes: Record<number, string> = {
   30: "Read only token"
 };
 
+export type RateLimitInfo = {
+  limit?: number;
+  remaining?: number;
+  resetSeconds?: number;
+  retrySeconds?: number;
+};
+
+export type WbResult = {
+  status: number;
+  headers: Record<string, string>;
+  rateLimit: RateLimitInfo;
+  data: unknown;
+};
+
 export function resolveBase(name: string): string {
   if (!(name in baseUrls)) {
     const allowed = Object.keys(baseUrls).join(", ");
@@ -71,12 +85,21 @@ export function decodeScopes(bitmask: unknown): string[] {
     .map(([, scope]) => scope);
 }
 
+export function parseRateLimitHeaders(headers: Record<string, string>): RateLimitInfo {
+  return {
+    limit: parseOptionalNumber(headers["x-ratelimit-limit"]),
+    remaining: parseOptionalNumber(headers["x-ratelimit-remaining"]),
+    resetSeconds: parseOptionalNumber(headers["x-ratelimit-reset"]),
+    retrySeconds: parseOptionalNumber(headers["x-ratelimit-retry"])
+  };
+}
+
 export async function wbRequest(input: {
   token: string;
   method: string;
   url: string;
   body?: unknown;
-}): Promise<{ status: number; headers: Record<string, string>; data: unknown }> {
+}): Promise<WbResult> {
   const response = await fetch(input.url, {
     method: input.method,
     headers: {
@@ -91,5 +114,11 @@ export async function wbRequest(input: {
   const contentType = response.headers.get("content-type") || "";
   const data = text && contentType.includes("application/json") ? JSON.parse(text) : text;
   const headers = Object.fromEntries(response.headers.entries());
-  return { status: response.status, headers, data };
+  return { status: response.status, headers, rateLimit: parseRateLimitHeaders(headers), data };
+}
+
+function parseOptionalNumber(value: string | undefined): number | undefined {
+  if (value === undefined || value === "") return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
 }
